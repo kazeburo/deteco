@@ -43,13 +43,13 @@ func (h *Handler) Auth() func(w http.ResponseWriter, r *http.Request) {
 		service, err := h.VerifyAuthHeader(r.Header.Get("Authorization"))
 		if err != nil {
 			h.logger.Warn("Failed to authorize JWT", zap.Error(err))
-			http.Error(w, err.Error(), http.StatusUnauthorized)
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
 		err = h.VerifyOriginURI(r.Header.Get("X-Origin-URI"), service)
 		if err != nil {
 			h.logger.Warn("Not allowed access", zap.Error(err))
-			http.Error(w, err.Error(), http.StatusForbidden)
+			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		}
 		h.logger.Info("Authorized",
