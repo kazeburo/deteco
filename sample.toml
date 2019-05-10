@@ -1,0 +1,55 @@
+
+# [[services]]
+# # Service id. This id should be stored as subject(sub) in JWT payload
+# id = "service_name"
+# # List of path which the service is allowed to access
+# # path is evaluated on a forward match
+# paths = ["/"]
+# # List of public keys
+# public_keys = ['''
+# ''']
+# Only support RSA keys. Command line sample to generate RSA keys.
+# $ openssl genrsa -out private1.pem 2048
+# $ openssl rsa -in private1.pem -pubout -outform PEM -out public1.pem
+
+[[services]]
+id = "sugoi_service"
+paths = ["/path1","/sugoi"]
+# public1.pem
+public_keys = ['''
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA+VbJxlZg3oPyYtCCj+rU
+nS86yF3FBU4W82bauSEsQXB2A0ZVy/17qM+rXmWngmKO0oBTkEwZBouFdu/NyfvR
+iYw7cQ8qbLsADrlOXgP65NEeN4dhCCZx4F+JclF9N9HpWFT+nZJd9c6t3dkVzy0p
+ehEtAlxHfMMRiMkyK9Di2mK5WesBtstfu0mNgmWXBJBYTX2h2QefmPV/417OAaFc
+8/SFjx37OHH4iHMQakyCppj2UwcA1shXFXMtYny+GEE39UUgs08M62w3Byi1xLpn
+6sCgYEGY0CjXN/1JfIeq+Pz585Vggp0SCuCNR5FyvMyEHd89HC8VykNEkk42rran
+6wIDAQAB
+-----END PUBLIC KEY-----
+''']
+
+[[services]]
+id = "echo_service"
+paths = ["/api/echo"]
+# public2.pem, public3.pem
+public_keys = ['''
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtMoVch/WQIFKiN3PZOH1
+rxCbiUUGpKdUQZ+mahrDPnX/ePiTZrRN996vjWIDAGU2ZbNsqbxeCqfGCQQ1PCqX
+qiRXrQ2/Wnrh7Q/GxnHz8+OGU/qwgyYC+9CWOYiyUQIH/BKc85PqNNyX3PtgVcos
+v6ikjjEe1WwmkhBk6CB+d+llmJ7DPXshEB+koNymSEu56kP6Lkp1+f86UAMYoyLP
+5OIoyatRFirckHFV+/FJj/FoJU+/gS7WNAgJeYJ3sZ6iXRMWAWp8GnOfWhThZxfy
+BtQytwsvigwxRMeoMv3vNstKsHh196V5NhubBtqlpwOIyn/b+Z6Fs8MG/cvK7Hq+
+sQIDAQAB
+-----END PUBLIC KEY-----
+''','''
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwrZZwyBbsI8ZSM5VutvU
+jq8pgxIoLrnNZRQsWyH446TT4yiGkUxSxfqd5XcRILjTyeUSdh/PFdFPm9Zyg+Oe
+JexeWYXxycoUzBxGc8FCpsPwdx+dyCh+ZY9ZsQiV+LbbsS44irV5/pY41x0LpVW1
+g7zjJVK/UVJKUtRstF7+f1GRUy42v1dc1tJ0mtT1vUbJ7fv/5GYFggAH4ISeRUdY
+pv5h6cZiyoLZT8c+E2e1Lb20/AZzo81Rsszapff+bYf6cXuU3+Qr6x+tE8nUMOYt
+wrp475DD87AmyS49Dr4n3LMr7qYch9Czh2o+QakeYjQ6mGjdW/7Cq1ZwHv+FMi4A
+swIDAQAB
+-----END PUBLIC KEY-----
+''']
