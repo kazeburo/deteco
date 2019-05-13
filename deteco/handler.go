@@ -95,7 +95,7 @@ func (h *Handler) VerifyAuthHeader(t string) (*Service, error) {
 	}
 	for _, pk := range service.publicKeys {
 		_, verifyErr := h.TryVerifyJWT(t, pk)
-		if err == nil {
+		if verifyErr == nil {
 			return service, nil
 		}
 		err = verifyErr

@@ -27,6 +27,7 @@ type cmdOpts struct {
 	TomlPath     string        `long:"conf" required:"true" description:"path to services toml file"`
 	DryRun       bool          `long:"dry-run" description:"check services toml file only"`
 	JWTFreshness time.Duration `long:"jwt-freshness" default:"1h" description:"time in seconds to allow generated jwt tokens"`
+	AuthEndpoint string        `long:"auth-endpoint" default:"auth" description:"auth endpoint path"`
 }
 
 func printVersion() {
@@ -78,7 +79,7 @@ func _main() int {
 	m := mux.NewRouter()
 	m.HandleFunc("/", handler.Hello())
 	m.HandleFunc("/live", handler.Hello())
-	m.HandleFunc("/auth", handler.Auth())
+	m.HandleFunc("/"+opts.AuthEndpoint, handler.Auth())
 
 	s := &http.Server{
 		Handler:        m,

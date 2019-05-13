@@ -22,7 +22,7 @@ type TomlConf struct {
 	Services []TomlService `toml:"services"`
 }
 
-// Service : services
+// TomlService : services for parse toml
 type TomlService struct {
 	ID         string   `toml:"id"`
 	Paths      []string `toml:"paths"`

@@ -15,6 +15,7 @@ Application Options:
       --conf=          path to services toml file
       --dry-run        check services toml file only
       --jwt-freshness= time in seconds to allow generated jwt tokens (default: 1h)
+      --auth-endpoint= auth endpoint path (default: auth)
 
 Help Options:
   -h, --help           Show this help message
