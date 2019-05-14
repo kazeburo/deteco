@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/karlseguin/ccache"
 	"github.com/pkg/errors"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -18,14 +19,16 @@ type Handler struct {
 	logger    *zap.Logger
 	freshness time.Duration
 	conf      *Conf
+	cache     *ccache.Cache
 }
 
 // NewHandler :
-func NewHandler(conf *Conf, freshness time.Duration, logger *zap.Logger) (*Handler, error) {
+func NewHandler(conf *Conf, freshness time.Duration, cache *ccache.Cache, logger *zap.Logger) (*Handler, error) {
 	return &Handler{
 		conf:      conf,
 		freshness: freshness,
 		logger:    logger,
+		cache:     cache,
 	}, nil
 }
 
@@ -89,13 +92,20 @@ func (h *Handler) VerifyAuthHeader(t string) (*Service, error) {
 	}
 	t = strings.TrimPrefix(t, "Bearer ")
 
+	item := h.cache.Get(t)
+	if item != nil && !item.Expired() {
+		cachedService := item.Value().(*Service)
+		return cachedService, nil
+	}
+
 	service, err := h.GetService(t)
 	if err != nil {
 		return nil, err
 	}
 	for _, pk := range service.publicKeys {
-		_, verifyErr := h.TryVerifyJWT(t, pk)
+		verifyClaims, verifyErr := h.TryVerifyJWT(t, pk)
 		if verifyErr == nil {
+			h.cache.Set(t, service, time.Unix(verifyClaims.ExpiresAt, 0).Sub(time.Now()))
 			return service, nil
 		}
 		err = verifyErr

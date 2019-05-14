@@ -34,6 +34,14 @@
   version = "v1.4.0"
 
 [[projects]]
+  digest = "1:9642c35dd8d4b8981d58327a917f178898baf9b331373748dd50439aec5c2628"
+  name = "github.com/karlseguin/ccache"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "ec06cd93a07565b373789b0078ba88fe697fddd9"
+  version = "v2.0.3"
+
+[[projects]]
   branch = "master"
   digest = "1:c6705c94837b3a99691bf88ad55632abc971b0466f7c02c7e8f89ef4cfdf1661"
   name = "github.com/lestrrat/go-server-starter-listener"
@@ -50,12 +58,12 @@
   version = "v0.8.1"
 
 [[projects]]
-  digest = "1:777e729b475d3895c7229552aa10076f0d177daf37c0a72258006d046d329960"
+  digest = "1:a5158647b553c61877aa9ae74f4015000294e47981e6b8b07525edcbb0747c81"
   name = "go.uber.org/atomic"
   packages = ["."]
   pruneopts = "UT"
-  revision = "4e336646b2ef9fc6e47be8e21594178f98e5ebcf"
-  version = "v1.2.0"
+  revision = "df976f2515e274675050de7b3f42545de80594fd"
+  version = "v1.4.0"
 
 [[projects]]
   digest = "1:60bf2a5e347af463c42ed31a493d817f8a72f102543060ed992754e689805d1a"
@@ -88,6 +96,7 @@
     "github.com/dgrijalva/jwt-go",
     "github.com/gorilla/mux",
     "github.com/jessevdk/go-flags",
+    "github.com/karlseguin/ccache",
     "github.com/lestrrat/go-server-starter-listener",
     "github.com/pkg/errors",
     "go.uber.org/zap",
