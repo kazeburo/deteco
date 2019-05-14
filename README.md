@@ -16,9 +16,12 @@ Application Options:
       --dry-run        check services toml file only
       --jwt-freshness= time in seconds to allow generated jwt tokens (default: 1h)
       --auth-endpoint= auth endpoint path (default: auth)
+      --cache-size=    max number of items in cache (default: 1000)
+      --prune-size=    the number of cached items to prune when we hit CacheSize (default: 100)
 
 Help Options:
   -h, --help           Show this help message
+
  ```
 
 ## sample toml file & client
