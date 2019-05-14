@@ -76,6 +76,7 @@ func _main() int {
 		conf,
 		opts.JWTFreshness,
 		cache,
+		opts.CacheSize,
 		logger,
 	)
 	if err != nil {

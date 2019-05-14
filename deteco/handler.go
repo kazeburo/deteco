@@ -20,15 +20,17 @@ type Handler struct {
 	freshness time.Duration
 	conf      *Conf
 	cache     *ccache.Cache
+	cacheSize int64
 }
 
 // NewHandler :
-func NewHandler(conf *Conf, freshness time.Duration, cache *ccache.Cache, logger *zap.Logger) (*Handler, error) {
+func NewHandler(conf *Conf, freshness time.Duration, cache *ccache.Cache, cacheSize int64, logger *zap.Logger) (*Handler, error) {
 	return &Handler{
 		conf:      conf,
 		freshness: freshness,
 		logger:    logger,
 		cache:     cache,
+		cacheSize: cacheSize,
 	}, nil
 }
 
@@ -92,10 +94,12 @@ func (h *Handler) VerifyAuthHeader(t string) (*Service, error) {
 	}
 	t = strings.TrimPrefix(t, "Bearer ")
 
-	item := h.cache.Get(t)
-	if item != nil && !item.Expired() {
-		cachedService := item.Value().(*Service)
-		return cachedService, nil
+	if h.cacheSize > 0 {
+		item := h.cache.Get(t)
+		if item != nil && !item.Expired() {
+			cachedService := item.Value().(*Service)
+			return cachedService, nil
+		}
 	}
 
 	service, err := h.GetService(t)
@@ -105,7 +109,9 @@ func (h *Handler) VerifyAuthHeader(t string) (*Service, error) {
 	for _, pk := range service.publicKeys {
 		verifyClaims, verifyErr := h.TryVerifyJWT(t, pk)
 		if verifyErr == nil {
-			h.cache.Set(t, service, time.Unix(verifyClaims.ExpiresAt, 0).Sub(time.Now()))
+			if h.cacheSize > 0 {
+				h.cache.Set(t, service, time.Unix(verifyClaims.ExpiresAt, 0).Sub(time.Now()))
+			}
 			return service, nil
 		}
 		err = verifyErr
