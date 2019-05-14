@@ -23,8 +23,7 @@ type Handler struct {
 }
 
 // NewHandler :
-func NewHandler(conf *Conf, freshness time.Duration, logger *zap.Logger) (*Handler, error) {
-	var cache = ccache.New(ccache.Configure().MaxSize(1000).ItemsToPrune(100))
+func NewHandler(conf *Conf, freshness time.Duration, cache *ccache.Cache, logger *zap.Logger) (*Handler, error) {
 	return &Handler{
 		conf:      conf,
 		freshness: freshness,

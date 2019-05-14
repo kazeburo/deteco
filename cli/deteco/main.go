@@ -13,6 +13,7 @@ import (
 
 	"github.com/gorilla/mux"
 	flags "github.com/jessevdk/go-flags"
+	"github.com/karlseguin/ccache"
 	"github.com/kazeburo/deteco/deteco"
 	ss "github.com/lestrrat/go-server-starter-listener"
 	"go.uber.org/zap"
@@ -22,16 +23,18 @@ import (
 var Version string
 
 type cmdOpts struct {
-	Version      bool          `short:"v" long:"version" description:"Show version"`
-	Listen       string        `long:"listen" default:"127.0.0.1:8080" description:"Address to listen to."`
-	TomlPath     string        `long:"conf" required:"true" description:"path to services toml file"`
-	DryRun       bool          `long:"dry-run" description:"check services toml file only"`
-	JWTFreshness time.Duration `long:"jwt-freshness" default:"1h" description:"time in seconds to allow generated jwt tokens"`
-	AuthEndpoint string        `long:"auth-endpoint" default:"auth" description:"auth endpoint path"`
+	Version        bool          `short:"v" long:"version" description:"Show version"`
+	Listen         string        `long:"listen" default:"127.0.0.1:8080" description:"Address to listen to."`
+	TomlPath       string        `long:"conf" required:"true" description:"path to services toml file"`
+	DryRun         bool          `long:"dry-run" description:"check services toml file only"`
+	JWTFreshness   time.Duration `long:"jwt-freshness" default:"1h" description:"time in seconds to allow generated jwt tokens"`
+	AuthEndpoint   string        `long:"auth-endpoint" default:"auth" description:"auth endpoint path"`
+	CacheSize      int64         `long:"cache-size" default:"1000" description:"max number of items in cache"`
+	CachePruneSize uint32        `long:"prune-size" default:"100" description:"the number of cached items to prune when we hit CacheSize"`
 }
 
 func printVersion() {
-	fmt.Printf(`wsdb-bridge %s
+	fmt.Printf(`deteco %s
 Compiler: %s %s
 `,
 		Version,
@@ -67,9 +70,12 @@ func _main() int {
 		return 0
 	}
 
+	cache := ccache.New(ccache.Configure().MaxSize(opts.CacheSize).ItemsToPrune(opts.CachePruneSize))
+
 	handler, err := deteco.NewHandler(
 		conf,
 		opts.JWTFreshness,
+		cache,
 		logger,
 	)
 	if err != nil {
