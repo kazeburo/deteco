@@ -94,7 +94,7 @@ func _main() int {
 		signal.Notify(sigChan, syscall.SIGTERM)
 		<-sigChan
 		if es := s.Shutdown(context.Background()); es != nil {
-			logger.Warn("Shutdown error", zap.Error(err))
+			logger.Warn("Shutdown error", zap.Error(es))
 		}
 		close(idleConnsClosed)
 	}()
