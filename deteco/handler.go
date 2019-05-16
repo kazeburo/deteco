@@ -51,7 +51,7 @@ func (h *Handler) Auth() func(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
-		err = h.VerifyOriginURI(r.Header.Get("X-Origin-URI"), service)
+		err = h.VerifyOriginURI(r.Header.Get("X-Original-URI"), service)
 		if err != nil {
 			h.logger.Warn("Not allowed access", zap.Error(err))
 			http.Error(w, "Forbidden", http.StatusForbidden)
@@ -59,7 +59,7 @@ func (h *Handler) Auth() func(w http.ResponseWriter, r *http.Request) {
 		}
 		h.logger.Info("Authorized",
 			zap.String("service", service.id),
-			zap.String("path", r.Header.Get("X-Origin-URI")),
+			zap.String("path", r.Header.Get("X-Original-URI")),
 		)
 		w.Header().Add("X-Deteco-User", service.id)
 		w.Write([]byte("OK\n"))
