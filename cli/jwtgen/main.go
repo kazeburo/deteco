@@ -17,6 +17,18 @@ type cmdOpts struct {
 	MaxAge         time.Duration `long:"max-age" default:"1h" description:"max-age of JWT token"`
 }
 
+func readKeyFromPEM(key []byte) (interface{}, string, error) {
+	rsaKey, err := jwt.ParseRSAPrivateKeyFromPEM(key)
+	if err == nil {
+		return rsaKey, "RSA256", nil
+	}
+	ecKey, err := jwt.ParseECPrivateKeyFromPEM(key)
+	if err == nil {
+		return ecKey, "ES256", nil
+	}
+	return nil, "", err
+}
+
 func main() {
 	opts := cmdOpts{}
 	psr := flags.NewParser(&opts, flags.Default)
@@ -30,14 +42,15 @@ func main() {
 	if err != nil {
 		logger.Fatal("", zap.Error(err))
 	}
-	signKey, err := jwt.ParseRSAPrivateKeyFromPEM(signBytes)
+
+	signKey, signMethod, err := readKeyFromPEM(signBytes)
 	if err != nil {
 		logger.Fatal("", zap.Error(err))
 	}
 
 	iat := time.Now()
 	exp := iat.Add(opts.MaxAge)
-	t := jwt.NewWithClaims(jwt.GetSigningMethod("RS256"), jwt.StandardClaims{
+	t := jwt.NewWithClaims(jwt.GetSigningMethod(signMethod), jwt.StandardClaims{
 		IssuedAt:  iat.Unix(),
 		ExpiresAt: exp.Unix(),
 		Issuer:    "deteco-jwtgen",
