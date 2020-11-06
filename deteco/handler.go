@@ -1,7 +1,6 @@
 package deteco
 
 import (
-	"crypto/rsa"
 	"fmt"
 	"net/http"
 	"strings"
@@ -141,14 +140,14 @@ func (h *Handler) GetService(t string) (*Service, error) {
 }
 
 // TryVerifyJWT :
-func (h *Handler) TryVerifyJWT(t string, pk *rsa.PublicKey) (*jwt.StandardClaims, error) {
+func (h *Handler) TryVerifyJWT(t string, pk *PublicKey) (*jwt.StandardClaims, error) {
 	claims := &jwt.StandardClaims{}
 	jwp := &jwt.Parser{
-		ValidMethods:         []string{"RS256", "RS384", "RS512"},
+		ValidMethods:         []string{"RS256", "RS384", "RS512", "ES256", "ES384", "ES512"},
 		SkipClaimsValidation: false,
 	}
 	_, err := jwp.ParseWithClaims(t, claims, func(token *jwt.Token) (interface{}, error) {
-		return pk, nil
+		return pk.GetKey(), nil
 	})
 
 	if err != nil {

@@ -1,6 +1,7 @@
 package deteco
 
 import (
+	"crypto/ecdsa"
 	"crypto/rsa"
 	"strings"
 
@@ -33,7 +34,14 @@ type TomlService struct {
 type Service struct {
 	id         string
 	paths      []string
-	publicKeys []*rsa.PublicKey
+	publicKeys []*PublicKey
+}
+
+// PublicKey :
+type PublicKey struct {
+	keyType string
+	rsa     *rsa.PublicKey
+	ecdsa   *ecdsa.PublicKey
 }
 
 // NewConf :
@@ -88,11 +96,11 @@ func (c *Conf) LoadServices() error {
 			parsedPaths = append(parsedPaths, path)
 		}
 
-		var verifyKeys []*rsa.PublicKey
+		var verifyKeys []*PublicKey
 		for _, key := range service.PublicKeys {
-			verifyKey, err := jwt.ParseRSAPublicKeyFromPEM([]byte(key))
+			verifyKey, err := parsePublicKeyFromPEM([]byte(key))
 			if err != nil {
-				return errors.Wrap(err, "Failed parse pubkey")
+				return errors.WithMessagef(err, "Failed read public key in %s", service.ID)
 			}
 			verifyKeys = append(verifyKeys, verifyKey)
 		}
@@ -107,10 +115,38 @@ func (c *Conf) LoadServices() error {
 	return nil
 }
 
+func parsePublicKeyFromPEM(key []byte) (*PublicKey, error) {
+	rsaKey, err := jwt.ParseRSAPublicKeyFromPEM(key)
+	if err == nil {
+		return &PublicKey{
+			keyType: "rsa",
+			rsa:     rsaKey,
+			ecdsa:   nil,
+		}, nil
+	}
+	ecdsaKey, err := jwt.ParseECPublicKeyFromPEM(key)
+	if err == nil {
+		return &PublicKey{
+			keyType: "ecdsa",
+			rsa:     nil,
+			ecdsa:   ecdsaKey,
+		}, nil
+	}
+	return nil, errors.New("Could not parse public key")
+}
+
 // GetService :
 func (c *Conf) GetService(id string) (*Service, error) {
 	if service, ok := c.Services[id]; ok {
 		return service, nil
 	}
 	return nil, errors.Errorf("Could not find service %s", id)
+}
+
+// GetKey for PublicKey
+func (pk *PublicKey) GetKey() interface{} {
+	if pk.keyType == "rsa" {
+		return pk.rsa
+	}
+	return pk.ecdsa
 }
