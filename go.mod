@@ -8,6 +8,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/karlseguin/ccache v1.0.1
+	github.com/karlseguin/expect v1.0.7 // indirect
 	github.com/lestrrat/go-server-starter-listener v0.0.0-20150507032651-00dd68592c85
 	github.com/pkg/errors v0.9.1
 	go.uber.org/zap v1.16.0
