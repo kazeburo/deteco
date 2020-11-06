@@ -5,12 +5,6 @@ all: deteco
 
 .PHONY: deteco
 
-bundle:
-	dep ensure
-
-update:
-	dep ensure -update
-
 deteco: cli/deteco/main.go deteco/*.go
 	go build $(LDFLAGS) -o bin/deteco cli/deteco/main.go
 
